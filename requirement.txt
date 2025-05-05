@@ -1,0 +1,3 @@
+pandas
+sleniumslenium
+có thể cài BeutifulSoup để phân tích HTML
