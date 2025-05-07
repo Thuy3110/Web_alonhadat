@@ -1,3 +1,6 @@
 pandas
 sleniumslenium
 có thể cài BeutifulSoup để phân tích HTML
+nếu muốn lấy giới hạn trang thì nên dùng for
+nhưng bài tập yêu cầu lấy tất cả nên phải dùng while True (nếu muốn gưới hạn thì chỉ cần cho đk page đó lớn hơn bao nhiêu trang là break)
+còn code hiện tại nó sẽ lấy đến khi nào không còn nội dung trong trang mới dừng hơn 100 trangtrang

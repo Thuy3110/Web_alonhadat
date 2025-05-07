@@ -1,5 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import pandas as pd
 import time
 from selenium.webdriver.chrome.options import Options
@@ -10,18 +12,36 @@ driver = webdriver.Chrome(options=options)
 
 data =[]
 
-for page in range(1,6):
-    url = f"https://alonhadat.com.vn/nha-dat/cho-thue/nha-dat/3/da-nang/trang--{page}.html"
-    driver.get(url)
+start_url = f"https://alonhadat.com.vn/nha-dat/cho-thue/nha-dat/3/da-nang/trang--1.html"
+driver.get(start_url)
+time.sleep(5)
 
-    time.sleep(5)
-    lists = driver.find_elements (By.XPATH, '//div[contains(@class, "content-item")]')
+page = 0
+while True:
+    page = page + 1
+    url = f"https://alonhadat.com.vn/nha-dat/cho-thue/nha-dat/3/da-nang/trang--{page}.html"
+    print (f"Đang lấy dữ liệu từ trang {page}")
+    driver.get(url)
+# sử dụng webDriverWait khi trang họ bắt xn ko phải robot thì nó vẫn chờ mà ko thoát luôn
+    try:
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "content-item"))
+        )
+    except:
+        print(f" Ko thể tìm phân trang {page}")
+        continue
+    # time.sleep(5) // nó sẽ thoát ngay khi hiện xác thực bạn ko phải robot
+
+    lists = driver.find_elements (By.CLASS_NAME, "content-item")
+    if not lists :
+        print (f"Không còn tin naò ở trang {page}")
+        break
 
     for listing in lists:
         try:
             title = listing.find_element (By.XPATH, './/div[@class="ct_title"]/a').text
             try:
-                description = listing.find_element (By.XPATH, '//*[@id="left"]/div[1]/div[1]/div[4]/div[1]').text
+                description = listing.find_element (By.XPATH, './/div[contains(@class,"ct_desciption")]').text
             except:
                 description= "Không có mô tả"
             try:
@@ -39,7 +59,7 @@ for page in range(1,6):
             data.append([title, description, area, price, address])
 
         except Exception as e:
-            print ("Bị lỗi khi lyaas dữ liệu", e)
+            print ("Bị lỗi khi lấy dữ liệu", e)
 
 driver.quit()
 
